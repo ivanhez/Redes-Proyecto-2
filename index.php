@@ -9,7 +9,6 @@ $color_pick = array_rand($colors);
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/main.css" type="text/css">
-	<script type="text/javascript" src="js/chat.js"></script>
 </head>
 
 <body>
@@ -22,8 +21,7 @@ $color_pick = array_rand($colors);
 		</div>
 	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script language="javascript" type="text/javascript">
-
+	<script type="text/javascript" src="js/chat.js"></script>
 	</script>
 </body>
 

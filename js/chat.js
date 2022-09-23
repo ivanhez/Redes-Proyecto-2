@@ -1,6 +1,6 @@
 //create a new WebSocket object.
 var msgBox = $("#message-box");
-var wsUri = "ws://localhost:9001/duckchat/server.php";
+var wsUri = "ws://localhost:9001/server.php";
 websocket = new WebSocket(wsUri);
 
 websocket.onopen = function (ev) {
