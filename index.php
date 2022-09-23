@@ -15,11 +15,29 @@ $color_pick = array_rand($colors);
 	<div class="chat-wrapper">
 		<div id="message-box"></div>
 		<div class="user-panel">
-			<input type="text" name="name" id="name" placeholder="Your Name" maxlength="15" />
+			<input type="hidden" name="room" id="room" maxlength="15" value="" disabled />
+			<input type="text" name="name" id="name" maxlength="15" value="" disabled />
 			<input type="text" name="message" id="message" placeholder="Type your message here..." maxlength="100" />
 			<button id="send-message">Send</button>
 		</div>
 	</div>
+	<script>
+		function login() {
+			let person = prompt("Please enter your name:");
+			if (person == null || person == "") {
+				login();
+			} else {
+				let room = prompt("Please enter a room to join:");
+				if (room == null || room == "") {
+					login();
+				} else {
+					document.getElementById("name").value = person;
+					document.getElementById("room").value = room;
+				}
+			}
+		}
+		login();
+	</script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript" src="js/chat.js"></script>
 	</script>

@@ -5,14 +5,14 @@ websocket = new WebSocket(wsUri);
 
 websocket.onopen = function (ev) {
   // connection is open
-  msgBox.append(
-    '<div class="system_msg" style="color:#bbbbbb">BIENVENIDO A CHAT!</div>'
-  ); //notify user
+  // msgBox.append(
+  //   '<div class="system_msg" style="color:#bbbbbb">BIENVENIDO A CHAT!</div>'
+  // ); //notify user
   var start = {
     type: "start",
     message: {
-      player: "NICKNAME",
-      room: "ROOMNAME",
+      player: document.getElementById("name").value,
+      room: document.getElementById("room").value,
       status: "START",
       game: {},
     },
@@ -39,19 +39,19 @@ websocket.onmessage = function (ev) {
     case "usermsg":
       msgBox.append(
         '<div><span class="user_name" style="color:' +
-          user_color +
-          '">' +
-          user_name +
-          '</span> : <span class="user_message">' +
-          user_message +
-          "</span></div>"
+        user_color +
+        '">' +
+        user_name +
+        '</span> : <span class="user_message">' +
+        user_message +
+        "</span></div>"
       );
       break;
     case "system":
       msgBox.append('<div style="color:#bbbbbb">' + user_message + "</div>");
       break;
     case "game":
-      var game =  JSON.parse(user_message).game;
+      var game = JSON.parse(user_message).game;
       var order = game.action;
       var turn = game.turn;
       var order = game.order;
