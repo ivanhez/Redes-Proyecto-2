@@ -2,6 +2,60 @@
 $host = 'localhost'; //host
 $port = '9001'; //port
 $null = NULL; //null var
+$deck = array(
+	'"3D"',
+	'"4D"',
+	'"5D"',
+	'"6D"',
+	'"7D"',
+	'"8D"',
+	'"9D"',
+	'"10D"',
+	'"JD"',
+	'"QD"',
+	'"KD"',
+	'"AD"',
+	'"2D"',
+	'"3T"',
+	'"4T"',
+	'"5T"',
+	'"6T"',
+	'"7T"',
+	'"8T"',
+	'"9T"',
+	'"10T"',
+	'"JT"',
+	'"QT"',
+	'"KT"',
+	'"AT"',
+	'"2T"',
+	'"3C"',
+	'"4C"',
+	'"5C"',
+	'"6C"',
+	'"7C"',
+	'"8C"',
+	'"9C"',
+	'"10C"',
+	'"JC"',
+	'"QC"',
+	'"KC"',
+	'"AC"',
+	'"2C"',
+	'"3E"',
+	'"4E"',
+	'"5E"',
+	'"6E"',
+	'"7E"',
+	'"8E"',
+	'"9E"',
+	'"10E"',
+	'"JE"',
+	'"QE"',
+	'"KE"',
+	'"AE"',
+	'"2E"'
+);
 
 //Create TCP/IP sream socket
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -48,13 +102,45 @@ while (true) {
 		while (socket_recv($changed_socket, $buf, 1024, 0) >= 1) {
 			$received_text = unmask($buf); //unmask data
 			$tst_msg = json_decode($received_text, true); //json decode 
-			$user_name = $tst_msg['name']; //sender name
-			$user_message = $tst_msg['message']; //message text
-			$user_color = $tst_msg['color']; //color
+			$type = $tst_msg['type']; //type
 
-			//prepare data to be sent to client
-			$response_text = mask(json_encode(array('type' => 'usermsg', 'name' => $user_name, 'message' => $user_message, 'color' => $user_color)));
-			send_message($response_text); //send data
+			switch ($type) {
+				case 'chat':
+					$user_name = $tst_msg['name']; //sender name
+					$user_message = $tst_msg['message']; //message text
+					$user_color = $tst_msg['color']; //color
+					//prepare data to be sent to client
+					$response_text = mask(json_encode(array('type' => 'usermsg', 'name' => $user_name, 'message' => $user_message, 'color' => $user_color)));
+					send_message($response_text); //send data
+					break;
+				case 'start':
+					$tst_msg = $tst_msg['message']; //json decode 
+					$player = $tst_msg['player'];
+					$room = $tst_msg['room'];
+					$status = $tst_msg['status'];
+					$startmsg = $player . " IS CONNECTING TO " . $room;
+					$serversays = mask(json_encode(array('type' => 'system', 'message' => $startmsg)));
+					send_message($serversays);
+
+					shuffle($deck);
+					$hand = array_slice($deck, 0, 12);
+					$joingame = '{
+						"player": "' . $player . '",
+						"room": "' . $room . '",
+						"status": "PLAYING",
+						"game": {
+							"order": 1,
+							"turn": true,
+							"table": "0",
+							"hand": [' . implode(", ", $hand) . '],
+							"action": "TURN"
+						}
+					}';
+					$serversays = mask(json_encode(array('type' => 'game', 'message' => $joingame)));
+					send_message($serversays);
+					break;
+			}
+
 			break 2; //exist this loop
 		}
 
