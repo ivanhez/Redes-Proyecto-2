@@ -19,7 +19,6 @@ websocket.onopen = function (ev) {
     color: "<?php echo $colors[$color_pick]; ?>",
   };
   //convert and send data to server
-
   websocket.send(JSON.stringify(start));
 };
 // Message received from server
@@ -27,16 +26,11 @@ websocket.onmessage = function (ev) {
   var response = JSON.parse(ev.data); //PHP sends Json data
   var res_type = response.type; //message type
   var user_message = response.message; //message text
-  var user_name = response.name; //user name
-  var user_color = response.color; //color
-
-  // console.log(response);
-  // console.log(res_type);
-  // console.log(user_message);
-  // console.log(user_name);
-
+  console.log(response);
   switch (res_type) {
     case "usermsg":
+      var user_name = response.name; //user name
+      var user_color = response.color; //color
       msgBox.append(
         '<div><span class="user_name" style="color:' +
         user_color +
@@ -52,12 +46,15 @@ websocket.onmessage = function (ev) {
       break;
     case "game":
       var game = JSON.parse(user_message).game;
+      var player = JSON.parse(user_message).player;
       var order = game.action;
       var turn = game.turn;
       var order = game.order;
       var table = game.table;
       var hand = game.hand;
-      msgBox.append('<div style="color:#bbbbbb"> YOUR HAND IS ' + hand + "</div>");
+      if (player == document.getElementById("name").value) {
+        msgBox.append('<div style="color:#bbbbbb"> YOUR HAND IS ' + hand + "</div>");
+      }
 
       break;
   }
@@ -90,7 +87,7 @@ function send_message() {
   var message_input = $("#message"); //user message text
   var name_input = $("#name"); //user name
 
-  if (message_input.val() == "") {
+  if (name_input.val() == "") {
     //empty name?
     alert("Enter a name!");
     return;

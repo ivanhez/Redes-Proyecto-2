@@ -124,7 +124,6 @@ while (true) {
 						array_push($roomnames, $val[$key]['room']);
 					}
 					if (in_array($room, $roomnames)) {
-						echo "TRYING TO JOIN " . $room;
 						join_room($room, $player);
 					} else {
 						create_room($room, $deck);
@@ -161,32 +160,53 @@ function join_room($room, $player)
 		if ($val[0]['room'] == $room) {
 			$players = $val[0]['players'];
 			if (count($players) <= 4) {
-				array_push($players, $player);
-				$val[0]['players'] = $players;
-				$order = count($players);
-				$startmsg = $player . " IS CONNECTING TO " . $room;
-				$serversays = mask(json_encode(array('type' => 'system', 'message' => $startmsg)));
-				send_message($serversays);
-				$ddeck = $val[0]['deck'];
-				print_r($ddeck);
-				$hand = array_slice($ddeck, 0, 13);
-				print_r($ddeck);
-				$val[0]['deck'] = array_slice($ddeck, 13, sizeof($ddeck));;
-				$joingame = '{
-						"player": "' . $player . '",
-						"room": "' . $room . '",
-						"status": "PLAYING",
-						"game": {
-							"order": ' . $order . ',
-							"turn": false,
-							"table": "0",
-							"hand": [' . implode(", ", $hand) . '],
-							"action": "WAIT"
-						}
-					}';
-				$serversays = mask(json_encode(array('type' => 'game', 'message' => $joingame)));
-				send_message($serversays);
+				if (!in_array($player, $players)) {
+					array_push($players, $player);
+					$val[0]['players'] = $players;
+					$order = count($players);
+					$startmsg = $player . " IS CONNECTING TO " . $room . " CURRENT PLAYERS IN ROOM: " . implode(", ", $players);
+					$serversays = mask(json_encode(array('type' => 'system', 'message' => $startmsg)));
+					send_message($serversays);
+					$ddeck = $val[0]['deck'];
+					$hand = array_slice($ddeck, 0, 13);
+					$val[0]['deck'] = array_slice($ddeck, 13, sizeof($ddeck));
+					if (!in_array('3D', $hand)) {
+						$joingame = '{
+							"player": "' . $player . '",
+							"room": "' . $room . '",
+							"status": "PLAYING",
+							"game": {
+								"order": ' . $order . ',
+								"turn": false,
+								"table": "0",
+								"hand": [' . implode(", ", $hand) . '],
+								"action": "WAIT"
+							}
+						}';
+						$serversays = mask(json_encode(array('type' => 'game', 'message' => $joingame)));
+						send_message($serversays);
+					} else {
+						$joingame = '{
+							"player": "' . $player . '",
+							"room": "' . $room . '",
+							"status": "PLAYING",
+							"game": {
+								"order": ' . $order . ',
+								"turn": false,
+								"table": "0",
+								"hand": [' . implode(", ", $hand) . '],
+								"action": "TURN"
+							}
+						}';
+						$serversays = mask(json_encode(array('type' => 'game', 'message' => $joingame)));
+						send_message($serversays);
+					}
+				} else {
+					echo "ERROR PLAYER ALREADY EXISTS";
+					send_message(mask(json_encode(array('type' => 'system', 'message' => "ERROR PLAYER ALREADY EXISTS"))));
+				}
 			} else {
+				echo "ERROR MAX PLAYERS";
 				send_message(mask(json_encode(array('type' => 'system', 'message' => "ERROR MAX PLAYERS"))));
 			}
 		}
