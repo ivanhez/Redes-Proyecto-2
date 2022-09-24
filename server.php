@@ -133,22 +133,36 @@ while (true) {
 
 					break;
 				case 'game':
-					// $tst_msg = $tst_msg['message']; //json decode 
-					// $player = $tst_msg['player'];
-					// $room = $tst_msg['room'];
-					// $status = $tst_msg['status'];
-					// $roomnames = array();
-					// foreach ($rooms as $key => $val) {
-					// 	array_push($roomnames, $val[$key]['room']);
-					// }
-					// if (in_array($room, $roomnames)) {
-					// 	join_room($room, $player);
-					// } else {
-					// 	create_room($room, $deck);
-					// 	join_room($room, $player);
-					// }
+					$tst_msg = $tst_msg['message'];
+					$serversays = mask(json_encode(array('type' => 'game', 'message' => $tst_msg)));
+					send_message($serversays);
 
-
+					$room = $tst_msg['room'];
+					$status = $tst_msg['status'];
+					$order = $tst_msg['order'] + 1;
+					$action = $tst_msg['action'];
+					$table = $tst_msg['table'];
+					$order = ($order >= 5) ? 0 : $order;
+					echo $order;
+					foreach ($rooms as &$val) {
+						if ($val[0]['room'] == $room) {
+							echo json_encode($val[0]['players']);
+							echo $val[0]['players'][$order];
+							$player = $val[0]['players'][$order];
+						}
+					}
+					echo $order;
+					echo $player;
+					$next = '{
+						"player": "' . $player . '",
+						"room": "' . $room . '",
+						"status": "PLAYING",
+						"order": ' . $order . ',
+						"table": ' . $table . ',
+						
+					}';
+					$serversays = mask(json_encode(array('type' => 'game', 'message' => $next)));
+					send_message($serversays);
 					break;
 			}
 

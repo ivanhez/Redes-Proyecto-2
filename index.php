@@ -23,59 +23,65 @@ $color_pick = array_rand($colors);
 		</div>
 	</div>
 	<div id="hand">
-		<button style="width:35px" id="c1" hidden>
+		<input type="hidden" id="myhand">
+		<button onclick="select_card(this.id)" style="width:35px" id="c1" hidden>
 			<div id="n1">A</div>
 			<div id="p1" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c2" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c2" hidden>
 			<div id="n2">A</div>
 			<div id="p2" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c3" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c3" hidden>
 			<div id="n3">A</div>
 			<div id="p3" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c4" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c4" hidden>
 			<div id="n4">A</div>
 			<div id="p4" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c5" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c5" hidden>
 			<div id="n5">A</div>
 			<div id="p5" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c6" hidden>
+		<button sonclick="select_card(this.id)" style="width:35px" id="c6" hidden>
 			<div id="n6">A</div>
 			<div id="p6" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c7" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c7" hidden>
 			<div id="n7">A</div>
 			<div id="p7" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c8" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c8" hidden>
 			<div id="n8">A</div>
 			<div id="p8" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c9" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c9" hidden>
 			<div id="n9">A</div>
 			<div id="p9" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c10" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c10" hidden>
 			<div id="n10">A</div>
 			<div id="p10" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c11" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c11" hidden>
 			<div id="n11">A</div>
 			<div id="p11" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c12" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c12" hidden>
 			<div id="n12">A</div>
 			<div id="p12" style="color:red">♥</div>
 		</button>
-		<button style="width:35px" id="c13" hidden>
+		<button onclick="select_card(this.id)" style="width:35px" id="c13" hidden>
 			<div id="n13">A</div>
 			<div id="p13" style="color:red">♥</div>
 		</button>
 	</div>
+	<br>TABLE CARD<br>
+	<button style=" width:35px" id="table" hidden>
+		<div id="tn"></div>
+		<div id="tp" style="color:red"></div>
+	</button>
 	<script>
 		function login() {
 			let person = prompt("Please enter your name:");
