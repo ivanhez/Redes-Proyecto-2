@@ -1,5 +1,5 @@
 <?php
-$host = 'https://cartas-13-kc433.ondigitalocean.app/'; //host
+$host = 'localhost'; //host
 $port = '9001'; //port
 $null = NULL; //null var
 $deck = array(
@@ -132,6 +132,24 @@ while (true) {
 
 
 					break;
+				case 'game':
+					// $tst_msg = $tst_msg['message']; //json decode 
+					// $player = $tst_msg['player'];
+					// $room = $tst_msg['room'];
+					// $status = $tst_msg['status'];
+					// $roomnames = array();
+					// foreach ($rooms as $key => $val) {
+					// 	array_push($roomnames, $val[$key]['room']);
+					// }
+					// if (in_array($room, $roomnames)) {
+					// 	join_room($room, $player);
+					// } else {
+					// 	create_room($room, $deck);
+					// 	join_room($room, $player);
+					// }
+
+
+					break;
 			}
 
 			break 2; //exist this loop
@@ -170,7 +188,22 @@ function join_room($room, $player)
 					$ddeck = $val[0]['deck'];
 					$hand = array_slice($ddeck, 0, 13);
 					$val[0]['deck'] = array_slice($ddeck, 13, sizeof($ddeck));
-					if (!in_array('3D', $hand)) {
+					if (in_array('"3D"', $hand) == 1) {
+						$joingame = '{
+							"player": "' . $player . '",
+							"room": "' . $room . '",
+							"status": "PLAYING",
+							"game": {
+								"order": ' . $order . ',
+								"turn": true,
+								"table": "0",
+								"hand": [' . implode(", ", $hand) . '],
+								"action": "TURN"
+							}
+						}';
+						$serversays = mask(json_encode(array('type' => 'start', 'message' => $joingame)));
+						send_message($serversays);
+					} else {
 						$joingame = '{
 							"player": "' . $player . '",
 							"room": "' . $room . '",
@@ -183,22 +216,7 @@ function join_room($room, $player)
 								"action": "WAIT"
 							}
 						}';
-						$serversays = mask(json_encode(array('type' => 'game', 'message' => $joingame)));
-						send_message($serversays);
-					} else {
-						$joingame = '{
-							"player": "' . $player . '",
-							"room": "' . $room . '",
-							"status": "PLAYING",
-							"game": {
-								"order": ' . $order . ',
-								"turn": false,
-								"table": "0",
-								"hand": [' . implode(", ", $hand) . '],
-								"action": "TURN"
-							}
-						}';
-						$serversays = mask(json_encode(array('type' => 'game', 'message' => $joingame)));
+						$serversays = mask(json_encode(array('type' => 'start', 'message' => $joingame)));
 						send_message($serversays);
 					}
 				} else {
