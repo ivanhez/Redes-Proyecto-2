@@ -77,6 +77,9 @@ $color_pick = array_rand($colors);
 			<div id="n13">A</div>
 			<div id="p13" style="color:red">♥</div>
 		</button>
+		<button onclick="pass()" style="width:50px" id="passb" hidden>
+			PASS
+		</button>
 	</div>
 	<br>TABLE CARD<br>
 	<button style=" width:35px" id="table" hidden>

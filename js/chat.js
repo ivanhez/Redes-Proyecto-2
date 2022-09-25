@@ -62,6 +62,7 @@ websocket.onmessage = function (ev) {
           document.getElementById("myhand").value = hand;
           document.getElementById("myorder").value = order;
           draw_hand(hand, turn);
+          document.getElementById("passb").removeAttribute("hidden");
         }
         // if (turn) {
         //   const index = hand.indexOf("3D");
@@ -85,18 +86,18 @@ websocket.onmessage = function (ev) {
         // }
         break;
       case "update":
-        draw_table(user_message.table);
+        console.log(user_message);
+        if (user_message.status == "WIN") {
+          msgBox.append(
+            '<div class="system_msg">' + user_message.player + " WINS</div>"
+          );
+        } else {
+          draw_table(user_message.table);
+        }
+
         break;
       case "game":
-        console.log(user_message);
         let gplayer = JSON.parse(user_message).player;
-        let gturn = JSON.parse(user_message).turn;
-        console.log(gplayer);
-        console.log(document.getElementById("name").value);
-        console.log(gturn);
-        console.log(
-          gplayer == document.getElementById("name").value && turn == true
-        );
         if (gplayer == document.getElementById("name").value) {
           let myhand = document.getElementById("myhand").value;
           let hand = myhand.split(",");
@@ -170,12 +171,6 @@ function select_card(cid) {
   number = document.getElementById(nid).textContent;
   suit = document.getElementById(pid).textContent;
   card = number + mapsuit[suit];
-  let index = hand.indexOf(card);
-  if (index > -1) {
-    hand.splice(index, 1);
-  }
-  document.getElementById("myhand").value = hand;
-  draw_hand(hand, false);
   let game = {
     type: "game",
     message: {
@@ -189,9 +184,44 @@ function select_card(cid) {
     },
     color: "<?php echo $colors[$color_pick]; ?>",
   };
-  websocket.send(JSON.stringify(game));
+
+  let index = hand.indexOf(card);
+  if (index > -1) {
+    hand.splice(index, 1);
+  }
+  document.getElementById("myhand").value = hand;
+  draw_hand(hand, false);
+  if (hand.length == 0) {
+    game.message.status = "WIN";
+    websocket.send(JSON.stringify(game));
+  } else {
+    websocket.send(JSON.stringify(game));
+  }
 }
 
+function pass() {
+  let myhand = document.getElementById("myhand").value;
+  let hand = myhand.split(",");
+  let order = document.getElementById("myorder").value;
+  let tn = document.getElementById("tn").textContent;
+  let tp = document.getElementById("tp").textContent;
+  card = tn + mapsuit[tp];
+  let game = {
+    type: "game",
+    message: {
+      player: document.getElementById("name").value,
+      room: document.getElementById("room").value,
+      status: "PLAYING",
+      table: card,
+      order: order,
+      action: "PASS",
+      turn: false,
+    },
+    color: "<?php echo $colors[$color_pick]; ?>",
+  };
+  websocket.send(JSON.stringify(game));
+  draw_hand(hand, false);
+}
 function draw_table(table) {
   if (table.length == 2) {
     number = table[0];
@@ -217,8 +247,10 @@ function draw_hand(hand, turn) {
     document.getElementById(cid).hidden = true;
     if (turn) {
       document.getElementById(cid).disabled = false;
+      document.getElementById("passb").disabled = false;
     } else {
       document.getElementById(cid).disabled = true;
+      document.getElementById("passb").disabled = true;
     }
   }
   for (let i = 1; i <= hand.length; i++) {
@@ -235,6 +267,7 @@ function draw_hand(hand, turn) {
     pid = "p" + i;
     ccolor = suit == "C" || suit == "D" ? "red" : "black";
     //  ♦ ♣ ♥ ♠
+
     document.getElementById(cid).removeAttribute("hidden");
     document.getElementById(nid).textContent = number;
     document.getElementById(pid).style.color = ccolor;

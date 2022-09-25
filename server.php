@@ -146,8 +146,6 @@ while (true) {
 					$order = ($order >= 5) ? 1 : $order;
 					foreach ($rooms as &$val) {
 						if ($val[0]['room'] == $room) {
-							echo json_encode($val[0]['players']);
-							echo $val[0]['players'][$order - 1];
 							$player = $val[0]['players'][$order - 1];
 						}
 					}
