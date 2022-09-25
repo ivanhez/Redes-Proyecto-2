@@ -1,6 +1,6 @@
 //create a new WebSocket object.
 var msgBox = $("#message-box");
-var wsUri = "wss://cartas-13-kc433.ondigitalocean.app/server.php";
+var wsUri = "wss://cartas-13-kc433.ondigitalocean.app:9001/server.php";
 websocket = new WebSocket(wsUri);
 
 var player;
