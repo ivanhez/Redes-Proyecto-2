@@ -1,6 +1,6 @@
 <?php
 $host = 'cartas-13-kc433.ondigitalocean.app'; //host
-$port = '9001'; //port
+$port = 9001; //port
 $null = NULL; //null var
 $deck = array(
 	'"3D"',
@@ -332,6 +332,7 @@ function perform_handshaking($receved_header, $client_conn, $host, $port)
 		"Connection: Upgrade\r\n" .
 		"WebSocket-Origin: $host\r\n" .
 		"WebSocket-Location: wss://$host:$port\r\n" .
+		"Sec-WebSocket-Version: 13\r\n" .
 		"Sec-WebSocket-Accept:$secAccept\r\n\r\n";
 	socket_write($client_conn, $upgrade, strlen($upgrade));
 }
