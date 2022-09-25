@@ -25,6 +25,7 @@ $color_pick = array_rand($colors);
 	<div id="hand">
 		<input type="hidden" id="myhand">
 		<input type="hidden" id="myorder">
+		<input type="hidden" id="top">
 		<button onclick="select_card(this.id)" style="width:35px" id="c1" hidden>
 			<div id="n1">A</div>
 			<div id="p1" style="color:red">♥</div>

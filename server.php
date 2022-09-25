@@ -145,6 +145,7 @@ while (true) {
 						$order = $tst_msg['order'];
 						$action = $tst_msg['action'];
 						$table = $tst_msg['table'];
+						$top = $tst_msg['top'];
 						$order = intval($order) + 1;
 						$order = ($order >= 5) ? 1 : $order;
 						foreach ($rooms as &$val) {
@@ -154,12 +155,12 @@ while (true) {
 						}
 						$next = '{
 							"player": "' . $player . '",
+							"top": "' . $top . '",
 							"room": "' . $room . '",
 							"status": "PLAYING",
 							"order": ' . $order . ',
 							"table": "' . $table . '",
 							"turn": true
-							
 						}';
 						$serversays = mask(json_encode(array('type' => 'game', 'message' => $next)));
 						send_message($serversays);

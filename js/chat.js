@@ -31,7 +31,7 @@ websocket.onmessage = function (ev) {
   var response = JSON.parse(ev.data); //PHP sends Json data
   var res_type = response.type; //message type
   var user_message = response.message; //message text
-  console.log(user_message);
+  // console.log(user_message);
   if (user_message != null) {
     switch (res_type) {
       case "usermsg":
@@ -60,6 +60,7 @@ websocket.onmessage = function (ev) {
         if (player == document.getElementById("name").value) {
           document.getElementById("myhand").value = hand;
           document.getElementById("myorder").value = order;
+          document.getElementById("tn").textContent = table;
           draw_hand(hand, turn);
           document.getElementById("passb").removeAttribute("hidden");
         }
@@ -76,6 +77,8 @@ websocket.onmessage = function (ev) {
         break;
       case "game":
         let gplayer = JSON.parse(user_message).player;
+        let tplayer = JSON.parse(user_message).top;
+        document.getElementById("top").value = tplayer;
         if (gplayer == document.getElementById("name").value) {
           let myhand = document.getElementById("myhand").value;
           let hand = myhand.split(",");
@@ -135,10 +138,57 @@ function send_message() {
   websocket.send(JSON.stringify(msg));
   message_input.val(""); //reset message input
 }
-
 let suitmap = { D: "♦", T: "♣", C: "♥", E: "♠" };
 let mapsuit = { "♦": "D", "♣": "T", "♥": "C", "♠": "E" };
+let suitnum = { D: 1, T: 2, C: 3, E: 4 };
+let numnum = {
+  0: 1,
+  3: 3,
+  4: 4,
+  5: 5,
+  6: 6,
+  7: 7,
+  8: 8,
+  9: 9,
+  10: 10,
+  J: 11,
+  Q: 12,
+  K: 13,
+  A: 14,
+  2: 15,
+};
+function check_card(number, suit) {
+  let tnumber = document.getElementById("tn").textContent;
+  let tsuit = document.getElementById("tp").textContent;
 
+  console.log(number);
+  console.log(tnumber);
+  number = numnum[number];
+  tnumber = numnum[tnumber];
+  console.log(number);
+  console.log(tnumber);
+
+  tsuit = mapsuit[tsuit];
+  tsuit = parseInt(suitnum[tsuit]);
+  suit = parseInt(suitnum[suit]);
+  if (
+    document.getElementById("top").value ==
+    document.getElementById("name").value
+  ) {
+    tnumber = 0;
+  }
+  if (number > tnumber) {
+    return true;
+  } else if (number == tnumber) {
+    if (suit > tsuit) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
 function select_card(cid) {
   let myhand = document.getElementById("myhand").value;
   let hand = myhand.split(",");
@@ -149,31 +199,36 @@ function select_card(cid) {
   number = document.getElementById(nid).textContent;
   suit = document.getElementById(pid).textContent;
   card = number + mapsuit[suit];
-  let game = {
-    type: "game",
-    message: {
-      player: document.getElementById("name").value,
-      room: document.getElementById("room").value,
-      status: "PLAYING",
-      table: card,
-      order: order,
-      action: card,
-      turn: false,
-    },
-    color: "<?php echo $colors[$color_pick]; ?>",
-  };
+  if (check_card(number, mapsuit[suit])) {
+    let game = {
+      type: "game",
+      message: {
+        player: document.getElementById("name").value,
+        room: document.getElementById("room").value,
+        status: "PLAYING",
+        table: card,
+        order: order,
+        action: card,
+        turn: false,
+        top: document.getElementById("name").value,
+      },
+      color: "<?php echo $colors[$color_pick]; ?>",
+    };
 
-  let index = hand.indexOf(card);
-  if (index > -1) {
-    hand.splice(index, 1);
-  }
-  document.getElementById("myhand").value = hand;
-  draw_hand(hand, false);
-  if (hand.length == 0) {
-    game.message.status = "WIN";
-    websocket.send(JSON.stringify(game));
+    let index = hand.indexOf(card);
+    if (index > -1) {
+      hand.splice(index, 1);
+    }
+    document.getElementById("myhand").value = hand;
+    draw_hand(hand, false);
+    if (hand.length == 0) {
+      game.message.status = "WIN";
+      websocket.send(JSON.stringify(game));
+    } else {
+      websocket.send(JSON.stringify(game));
+    }
   } else {
-    websocket.send(JSON.stringify(game));
+    alert("INVALID CARD! SELECT ANOTHER CARD!!");
   }
 }
 
@@ -194,6 +249,7 @@ function pass() {
       order: order,
       action: "PASS",
       turn: false,
+      top: document.getElementById("top").value,
     },
     color: "<?php echo $colors[$color_pick]; ?>",
   };
