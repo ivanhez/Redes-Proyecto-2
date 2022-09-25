@@ -31,7 +31,7 @@ websocket.onmessage = function (ev) {
   var response = JSON.parse(ev.data); //PHP sends Json data
   var res_type = response.type; //message type
   var user_message = response.message; //message text
-  // console.log(user_message);
+  console.log(user_message);
   if (user_message != null) {
     switch (res_type) {
       case "usermsg":
@@ -51,7 +51,6 @@ websocket.onmessage = function (ev) {
         msgBox.append('<div style="color:#bbbbbb">' + user_message + "</div>");
         break;
       case "start":
-        // console.log(user_message);
         let game = JSON.parse(user_message).game;
         player = JSON.parse(user_message).player;
         turn = game.turn;
@@ -64,37 +63,16 @@ websocket.onmessage = function (ev) {
           draw_hand(hand, turn);
           document.getElementById("passb").removeAttribute("hidden");
         }
-        // if (turn) {
-        //   const index = hand.indexOf("3D");
-        //   if (index > -1) {
-        //     hand.splice(index, 1);
-        //   }
-        //   let game = {
-        //     type: "game",
-        //     message: {
-        //       player: document.getElementById("name").value,
-        //       room: document.getElementById("room").value,
-        //       status: "PLAYING",
-        //       table: table,
-        //       order: order,
-        //       action: "3D"
-        //     },
-        //     color: "<?php echo $colors[$color_pick]; ?>",
-        //   };
-        //   websocket.send(JSON.stringify(game));
-        //   draw_hand(hand);
-        // }
         break;
       case "update":
-        console.log(user_message);
         if (user_message.status == "WIN") {
+          draw_table(user_message.table);
           msgBox.append(
             '<div class="system_msg">' + user_message.player + " WINS</div>"
           );
         } else {
           draw_table(user_message.table);
         }
-
         break;
       case "game":
         let gplayer = JSON.parse(user_message).player;
