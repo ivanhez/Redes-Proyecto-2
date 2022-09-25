@@ -5,7 +5,6 @@ websocket = new WebSocket(wsUri);
 
 var player;
 var hand;
-var order;
 var turn;
 var table;
 
@@ -32,7 +31,7 @@ websocket.onmessage = function (ev) {
   var response = JSON.parse(ev.data); //PHP sends Json data
   var res_type = response.type; //message type
   var user_message = response.message; //message text
-  console.log(user_message);
+  // console.log(user_message);
   if (user_message != null) {
     switch (res_type) {
       case "usermsg":
@@ -61,6 +60,7 @@ websocket.onmessage = function (ev) {
         hand = game.hand;
         if (player == document.getElementById("name").value) {
           document.getElementById("myhand").value = hand;
+          document.getElementById("myorder").value = order;
           draw_hand(hand, turn);
         }
         // if (turn) {
@@ -84,22 +84,24 @@ websocket.onmessage = function (ev) {
         //   draw_hand(hand);
         // }
         break;
+      case "update":
+        draw_table(user_message.table);
+        break;
       case "game":
-        // (async () => {
-        // console.log("waiting for variable");
-        // if (!window.hasOwnProperty(user_message))
-        //   await new Promise((resolve) => setTimeout(resolve, 1000));
-        // console.log("variable is defined");
         console.log(user_message);
-        player = user_message.player;
-        let action = user_message.action;
-        turn = user_message.turn;
-        let gorder = user_message.order;
-        table = user_message.table;
-        draw_table(table);
-
-        // })();
-
+        let gplayer = JSON.parse(user_message).player;
+        let gturn = JSON.parse(user_message).turn;
+        console.log(gplayer);
+        console.log(document.getElementById("name").value);
+        console.log(gturn);
+        console.log(
+          gplayer == document.getElementById("name").value && turn == true
+        );
+        if (gplayer == document.getElementById("name").value) {
+          let myhand = document.getElementById("myhand").value;
+          let hand = myhand.split(",");
+          draw_hand(hand, true);
+        }
         break;
     }
   }
@@ -161,7 +163,7 @@ let mapsuit = { "♦": "D", "♣": "T", "♥": "C", "♠": "E" };
 function select_card(cid) {
   let myhand = document.getElementById("myhand").value;
   let hand = myhand.split(",");
-  console.log(hand);
+  let order = document.getElementById("myorder").value;
   id = cid.substring(1);
   nid = "n" + id;
   pid = "p" + id;
@@ -173,6 +175,7 @@ function select_card(cid) {
     hand.splice(index, 1);
   }
   document.getElementById("myhand").value = hand;
+  draw_hand(hand, false);
   let game = {
     type: "game",
     message: {
@@ -182,12 +185,11 @@ function select_card(cid) {
       table: card,
       order: order,
       action: card,
+      turn: false,
     },
     color: "<?php echo $colors[$color_pick]; ?>",
   };
   websocket.send(JSON.stringify(game));
-  console.log(hand);
-  draw_hand(hand, false);
 }
 
 function draw_table(table) {

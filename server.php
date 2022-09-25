@@ -134,31 +134,30 @@ while (true) {
 					break;
 				case 'game':
 					$tst_msg = $tst_msg['message'];
-					$serversays = mask(json_encode(array('type' => 'game', 'message' => $tst_msg)));
+					$order = $tst_msg['order'];
+					$serversays = mask(json_encode(array('type' => 'update', 'message' => $tst_msg)));
 					send_message($serversays);
-
 					$room = $tst_msg['room'];
 					$status = $tst_msg['status'];
-					$order = $tst_msg['order'] + 1;
+					$order = $tst_msg['order'];
 					$action = $tst_msg['action'];
 					$table = $tst_msg['table'];
-					$order = ($order >= 5) ? 0 : $order;
-					echo $order;
+					$order = intval($order) + 1;
+					$order = ($order >= 5) ? 1 : $order;
 					foreach ($rooms as &$val) {
 						if ($val[0]['room'] == $room) {
 							echo json_encode($val[0]['players']);
-							echo $val[0]['players'][$order];
-							$player = $val[0]['players'][$order];
+							echo $val[0]['players'][$order - 1];
+							$player = $val[0]['players'][$order - 1];
 						}
 					}
-					echo $order;
-					echo $player;
 					$next = '{
 						"player": "' . $player . '",
 						"room": "' . $room . '",
 						"status": "PLAYING",
 						"order": ' . $order . ',
-						"table": ' . $table . ',
+						"table": "' . $table . '",
+						"turn": true
 						
 					}';
 					$serversays = mask(json_encode(array('type' => 'game', 'message' => $next)));
