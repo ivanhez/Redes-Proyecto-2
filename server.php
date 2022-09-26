@@ -88,8 +88,8 @@ while (true) {
 		perform_handshaking($header, $socket_new, $host, $port); //perform websocket handshake
 
 		socket_getpeername($socket_new, $ip); //get ip address of connected socket
-		$response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' connected'))); //prepare json data
-		send_message($response); //notify all users about new connection
+		// $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' connected'))); //prepare json data
+		// send_message($response); //notify all users about new connection
 
 		//make room for new socket
 		$found_socket = array_search($socket, $changed);
@@ -111,7 +111,7 @@ while (true) {
 					$user_message = $tst_msg['message']; //message text
 					$user_color = $tst_msg['color']; //color
 					//prepare data to be sent to client
-					$response_text = mask(json_encode(array('type' => 'usermsg', 'name' => $user_name, 'message' => $user_message, 'color' => $user_color)));
+					$response_text = mask(json_encode(array('type' => 'usermsg', 'room' => $tst_msg['room'], 'name' => $user_name, 'message' => $user_message, 'color' => $user_color)));
 					send_message($response_text); //send data
 					break;
 				case 'start':
@@ -261,8 +261,8 @@ function create_room($room, $deck)
 		)
 	);
 	array_push($rooms, $newroom);
-	$msg = "CREATED NEW ROOM " . $room;
-	send_message(mask(json_encode(array('type' => 'system', 'message' => $msg))));
+	// $msg = "CREATED NEW ROOM " . $room;
+	// send_message(mask(json_encode(array('type' => 'system', 'message' => $msg))));
 	return;
 }
 

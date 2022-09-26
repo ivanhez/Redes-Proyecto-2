@@ -31,21 +31,23 @@ websocket.onmessage = function (ev) {
   var response = JSON.parse(ev.data); //PHP sends Json data
   var res_type = response.type; //message type
   var user_message = response.message; //message text
-  // console.log(user_message);
+
   if (user_message != null) {
     switch (res_type) {
       case "usermsg":
         var user_name = response.name; //user name
         var user_color = response.color; //color
-        msgBox.append(
-          '<div><span class="user_name" style="color:' +
-            user_color +
-            '">' +
-            user_name +
-            '</span> : <span class="user_message">' +
-            user_message +
-            "</span></div>"
-        );
+        if (response.room == document.getElementById("room").value) {
+          msgBox.append(
+            '<div><span class="user_name" style="color:' +
+              user_color +
+              '">' +
+              user_name +
+              '</span> : <span class="user_message">' +
+              user_message +
+              "</span></div>"
+          );
+        }
         break;
       case "system":
         msgBox.append('<div style="color:#bbbbbb">' + user_message + "</div>");
@@ -66,12 +68,29 @@ websocket.onmessage = function (ev) {
         }
         break;
       case "update":
-        if (user_message.status == "WIN") {
-          draw_table(user_message.table);
-          msgBox.append(
-            '<div class="system_msg">' + user_message.player + " WINS</div>"
-          );
-        } else {
+        if (user_message.room == document.getElementById("room").value) {
+          if (user_message.status == "WIN") {
+            draw_table(user_message.table);
+            msgBox.append(
+              '<div class="system_msg">' + user_message.player + " WINS</div>"
+            );
+          } else {
+            if (user_message.action == "PASS") {
+              msgBox.append(
+                '<div class="system_msg">' +
+                  user_message.player +
+                  " PASSES</div>"
+              );
+            } else {
+              msgBox.append(
+                '<div class="system_msg">' +
+                  user_message.player +
+                  " PLAYS " +
+                  user_message.action +
+                  "</div>"
+              );
+            }
+          }
           draw_table(user_message.table);
         }
         break;
@@ -132,6 +151,7 @@ function send_message() {
     type: "chat",
     message: message_input.val(),
     name: name_input.val(),
+    room: document.getElementById("room").value,
     color: "<?php echo $colors[$color_pick]; ?>",
   };
   //convert and send data to server
@@ -160,14 +180,8 @@ let numnum = {
 function check_card(number, suit) {
   let tnumber = document.getElementById("tn").textContent;
   let tsuit = document.getElementById("tp").textContent;
-
-  console.log(number);
-  console.log(tnumber);
   number = numnum[number];
   tnumber = numnum[tnumber];
-  console.log(number);
-  console.log(tnumber);
-
   tsuit = mapsuit[tsuit];
   tsuit = parseInt(suitnum[tsuit]);
   suit = parseInt(suitnum[suit]);
