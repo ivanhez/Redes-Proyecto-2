@@ -1,5 +1,6 @@
 <?php
-$host = '68.183.111.216'; //host
+$host = 'localhost'; //host
+// $host = '68.183.111.216'; //host
 $port = 9001; //port
 $null = NULL; //null var
 $deck = array(
@@ -136,7 +137,6 @@ while (true) {
 					$tst_msg = $tst_msg['message'];
 					$order = $tst_msg['order'];
 					$status = $tst_msg['status'];
-
 					$serversays = mask(json_encode(array('type' => 'update', 'message' => $tst_msg)));
 					send_message($serversays);
 					if ($status != "WIN") {
@@ -164,6 +164,13 @@ while (true) {
 						}';
 						$serversays = mask(json_encode(array('type' => 'game', 'message' => $next)));
 						send_message($serversays);
+					} else {
+						foreach ($rooms[0] as $key => &$val) {
+							if ($val['room'] == $room) {
+								unset($rooms[0][$key]);
+							}
+						}
+						unset($val);
 					}
 					break;
 			}
@@ -237,11 +244,11 @@ function join_room($room, $player)
 					}
 				} else {
 					echo "ERROR PLAYER ALREADY EXISTS";
-					send_message(mask(json_encode(array('type' => 'system', 'message' => "ERROR PLAYER ALREADY EXISTS"))));
+					send_message(mask(json_encode(array('type' => 'error', 'message' => "ERROR PLAYER ALREADY EXISTS"))));
 				}
 			} else {
 				echo "ERROR MAX PLAYERS";
-				send_message(mask(json_encode(array('type' => 'system', 'message' => "ERROR MAX PLAYERS"))));
+				send_message(mask(json_encode(array('type' => 'error', 'message' => "ERROR MAX PLAYERS"))));
 			}
 		}
 	}

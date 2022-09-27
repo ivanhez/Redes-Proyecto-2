@@ -1,6 +1,7 @@
 //create a new WebSocket object.
 var msgBox = $("#message-box");
-var wsUri = "ws://68.183.111.216:9001/server.php";
+var wsUri = "ws://localhost:9001/Redes-Proyecto-2/server.php";
+// var wsUri = "ws://68.183.111.216:9001/server.php";
 websocket = new WebSocket(wsUri);
 
 var player;
@@ -49,6 +50,23 @@ websocket.onmessage = function (ev) {
           );
         }
         break;
+      case "error":
+        if (document.getElementById("myorder").value == "") {
+          alert(user_message);
+          login();
+          var start = {
+            type: "start",
+            message: {
+              player: document.getElementById("name").value,
+              room: document.getElementById("room").value,
+              status: "START",
+              game: {},
+            },
+            color: "<?php echo $colors[$color_pick]; ?>",
+          };
+          websocket.send(JSON.stringify(start));
+        }
+        break;
       case "system":
         msgBox.append('<div style="color:#bbbbbb">' + user_message + "</div>");
         break;
@@ -69,27 +87,33 @@ websocket.onmessage = function (ev) {
         break;
       case "update":
         if (user_message.room == document.getElementById("room").value) {
+          if (user_message.action == "PASS") {
+            msgBox.append(
+              '<div class="system_msg">' + user_message.player + " PASSES</div>"
+            );
+          } else {
+            card = user_message.action;
+            if (card.length == 2) {
+              number = card[0];
+              suit = card[1];
+            } else {
+              number = card[0] + card[1];
+              suit = card[2];
+            }
+            card = number + suitmap[suit];
+            msgBox.append(
+              '<div class="system_msg">' +
+                user_message.player +
+                " PLAYS " +
+                card +
+                "</div>"
+            );
+          }
           if (user_message.status == "WIN") {
             draw_table(user_message.table);
             msgBox.append(
               '<div class="system_msg">' + user_message.player + " WINS</div>"
             );
-          } else {
-            if (user_message.action == "PASS") {
-              msgBox.append(
-                '<div class="system_msg">' +
-                  user_message.player +
-                  " PASSES</div>"
-              );
-            } else {
-              msgBox.append(
-                '<div class="system_msg">' +
-                  user_message.player +
-                  " PLAYS " +
-                  user_message.action +
-                  "</div>"
-              );
-            }
           }
           draw_table(user_message.table);
         }
