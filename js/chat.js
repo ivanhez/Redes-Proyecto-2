@@ -1,7 +1,7 @@
 //create a new WebSocket object.
 var msgBox = $("#message-box");
-var wsUri = "ws://localhost:9001/Redes-Proyecto-2/server.php";
-// var wsUri = "ws://68.183.111.216:9001/server.php";
+// var wsUri = "ws://localhost:9001/Redes-Proyecto-2/server.php";
+var wsUri = "ws://68.183.111.216:9001/server.php";
 websocket = new WebSocket(wsUri);
 
 var player;

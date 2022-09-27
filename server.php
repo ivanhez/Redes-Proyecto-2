@@ -1,6 +1,6 @@
 <?php
-$host = 'localhost'; //host
-// $host = '68.183.111.216'; //host
+// $host = 'localhost'; //host
+$host = '68.183.111.216'; //host
 $port = 9001; //port
 $null = NULL; //null var
 $deck = array(
